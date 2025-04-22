@@ -10,7 +10,7 @@ Another Test Page
 
 This is a another test page. It has some basic text on it.
 
-This is a code directive added after the initial workflow draft. It
+This is a code directive added in a PR. It
 should trigger the workflow run, and fail CI.
 
 .. code:: shell
