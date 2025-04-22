@@ -17,4 +17,4 @@ should trigger the workflow run, and fail CI.
 
    Some text on the command line.
 
-More.
+More. And.
