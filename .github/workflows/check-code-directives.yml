@@ -25,16 +25,23 @@ jobs:
           continue-on-error: true
           run: |
             strings_to_search=('.. code-block::' '.. code::')
+            errors=""  
             for file in ${{ steps.changed_files.outputs.files }}; do  
               if [ -f "$file" ]; then  # Check if file exists  
                 for search_string in "${strings_to_search[@]}"; do  
                   if grep -q "$search_string" "$file"; then  
-                    echo "Found '$search_string' in $file"  
-                    exit 1  
+                    errors="$errors\nFound '$search_string' in $file"  
                   fi  
                 done  
-              fi
-            done
+              fi  
+            done  
+      
+            if [ ! -z "$errors" ]; then  
+              echo -e "Errors found:\n$errors"  
+              exit 1  
+            else  
+              echo "No errors found."  
+            fi
 
         - name: Fail if undesired directive is found
           if: failure()
