@@ -22,7 +22,6 @@ jobs:
           run: echo "::set-output name=files::$(git diff --name-only origin/${{ github.base_ref }})"
 
         - name: Search for undesired directives
-          continue-on-error: true
           run: |
             strings_to_search=('.. code-block::' '.. code::')
             errors=""  
@@ -42,7 +41,3 @@ jobs:
             else  
               echo "No errors found."  
             fi
-
-        - name: Fail if undesired directive is found
-          if: failure()
-          run: exit 1
