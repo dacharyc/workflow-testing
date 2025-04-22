@@ -1,0 +1,18 @@
+=============
+New Test Page
+=============
+
+.. contents:: On this page
+   :local:
+   :backlinks: none
+   :depth: 1
+   :class: singlecol
+
+This is a new test page. It has some basic text on it.
+
+This is a code block directive added after the initial workflow draft. It
+should trigger the workflow run, and fail CI.
+
+.. code-block:: shell
+
+   Some text on the command line.
