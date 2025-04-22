@@ -11,10 +11,15 @@ jobs:
         steps:
         - name: Check out code
           uses: actions/checkout@v3
+          with:  
+            fetch-depth: 0  # Fetch all history so we can access 'main' or the base branch.  
+  
+        - name: Fetch base branch  
+          run: git fetch --no-tags origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
 
         - name: Get list of changed files
           id: changed_files
-          run: echo "files=$(git diff --name-only origin/main)" >> $GITHUB_ENV
+          run: echo "files=$(git diff --name-only origin/${{ github.base_ref }})" >> $GITHUB_ENV
 
         - name: Search for undesired directives
           continue-on-error: true
