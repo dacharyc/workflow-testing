@@ -16,3 +16,6 @@ should trigger the workflow run, and fail CI.
 .. code-block:: shell
 
    Some text on the command line.
+
+This commit should pass with no problems, because no new lines have the verboten
+strings.
