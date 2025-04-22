@@ -15,25 +15,27 @@ jobs:
             fetch-depth: 0  # Fetch all history so we can access 'main' or the base branch.  
   
         - name: Fetch base branch  
-          run: git fetch --no-tags origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
-
-        - name: Get list of changed files
-          id: changed_files
-          run: echo "::set-output name=files::$(git diff --name-only origin/${{ github.base_ref }})"
+          run: git fetch origin ${{ github.base_ref }} --depth=1 
 
         - name: Search for undesired directives
           run: |
             strings_to_search=('.. code-block::' '.. code::')
             errors=""  
-            for file in ${{ steps.changed_files.outputs.files }}; do  
-              if [ -f "$file" ]; then  # Check if file exists  
-                for search_string in "${strings_to_search[@]}"; do  
-                  if grep -q "$search_string" "$file"; then  
-                    errors="$errors\nFound '$search_string' in $file"  
-                  fi  
-                done  
-              fi  
-            done  
+            
+            # Get a list of changed files  
+            changed_files=$(git diff --name-only origin/${{ github.base_ref }}...${{ github.sha }})  
+              
+            for file in $changed_files; do  
+              # Extract new lines for each file, ignoring context lines and file headers  
+              new_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} -- "$file" | grep '^+' | grep -v '^\+\+\+')  
+      
+              # Check each string in new lines  
+              for search_string in "${strings_to_search[@]}"; do  
+                if echo "$new_lines" | grep -q "$search_string"; then  
+                  errors="$errors\nFile '$file' contains '$search_string'"  
+                fi  
+              done  
+            done
       
             if [ ! -z "$errors" ]; then  
               echo -e "Errors found:\n$errors"
