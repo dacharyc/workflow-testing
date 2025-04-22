@@ -16,5 +16,3 @@ should trigger the workflow run, and fail CI.
 .. code:: shell
 
    Some text on the command line.
-
-And trigger test run again please.
