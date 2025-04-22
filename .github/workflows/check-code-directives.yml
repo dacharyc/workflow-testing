@@ -1,0 +1,33 @@
+name: Check Code Example Directives
+
+on:
+    pull_request:
+        paths:
+        - "source/**"
+
+jobs:
+    search_code_directives:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Check out code
+          uses: actions/checkout@v3
+
+        - name: Get list of changed files
+          id: changed_files
+          run: echo "files=$(git diff --name-only origin/main)" >> $GITHUB_ENV
+
+        - name: Search for undesired directives
+          continue-on-error: true
+          run: |
+            strings_to_search=('.. code-block::' '.. code::')
+            for file in ${{ env.files }}; do  
+              for search_string in "${strings_to_search[@]}"; do  
+                if grep -q "$search_string" "$file"; then  
+                  echo "Found '$search_string' in $file"  
+                fi
+              done
+            done
+
+        - name: Fail if undesired directive is found
+          if: failure()
+          run: exit 1
