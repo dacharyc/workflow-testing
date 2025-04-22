@@ -17,7 +17,7 @@ flag existing code blocks.
 
    Some text on the command line.
 
-And then maybe the other directive just to be sure.
+And then maybe the other directive.
 
 .. code:: shell
 
