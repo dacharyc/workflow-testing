@@ -12,7 +12,7 @@ jobs:
         - name: Check out code
           uses: actions/checkout@v3
           with:  
-            fetch-depth: 0  # Fetch all history so we can access 'main' or the base branch.  
+            fetch-depth: 2  # Ensures the previous commit is available to compare
   
         - name: Fetch base branch  
           run: git fetch origin ${{ github.base_ref }} --depth=1 
@@ -21,17 +21,15 @@ jobs:
           run: |
             strings_to_search=('.. code-block::' '.. code::')
             errors=""  
-            
-            echo "Checking diff between origin/${{ github.base_ref }} and ${{ github.sha }}"      
 
-            new_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} | grep '^+' | grep -v '^\+\+\+')  
+            new_lines=$(git diff --diff-filter=A --name-only HEAD^ HEAD | xargs -I {} git diff HEAD^ HEAD -- {})
             echo -e "New lines added in this PR:\n$new_lines"  
               
             for search_string in "${strings_to_search[@]}"; do
               echo "Searching for '$search_string' in new lines..."      
               if echo "$new_lines" | grep -q "$search_string"; then          
-                affected_files=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} --name-only -G"$search_string")  
-                errors="$errors\n$affected_files"  
+                affected_files=$(git diff --diff-filter=A --name-only HEAD^ HEAD | xargs -I {} git grep -l "$search_string" -- {})
+                errors="$errors\nFiles containing '$search_string':\n$affected_files"
               fi          
             done
               
