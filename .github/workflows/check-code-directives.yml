@@ -27,7 +27,7 @@ jobs:
             code_block_counter=0
             code_counter=0
             for line in "${plus_lines[@]}"; do
-              echo "$line" | grep "^+++" | /dev/null
+              echo "$line" | grep "^+++"
               if [ $? -eq 0 ] ; then
                 if [ $code_block_counter -ne 0 ] || [ $code_counter -ne 0 ] ; then
                   errors="yes"
