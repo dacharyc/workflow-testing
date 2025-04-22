@@ -22,22 +22,23 @@ jobs:
             strings_to_search=('.. code-block::' '.. code::')
             errors=""  
 
-            new_lines=$(git diff --diff-filter=A --name-only HEAD^ HEAD | xargs -I {} git diff HEAD^ HEAD -- {})
-            #echo -e "New lines added in this PR:\n$new_lines"  
+            new_lines=$(git diff HEAD^ HEAD | grep '^+' | grep -v '^\+\+\+')  
+          
+            echo -e "New lines added in this commit:\n$new_lines"  
+      
+            for search_string in "${strings_to_search[@]}"; do    
+              echo "Searching for '$search_string' in new lines..."          
+              if echo "$new_lines" | grep -q "$search_string"; then              
+                affected_files=$(echo "$new_lines" | grep "$search_string")  
+                errors="$errors\nOccurrences of '$search_string':\n$affected_files"  
+              fi              
+            done    
               
-            for search_string in "${strings_to_search[@]}"; do
-              echo "Searching for '$search_string' in new lines..."      
-              if echo "$new_lines" | grep -q "$search_string"; then          
-                affected_files=$(git diff --diff-filter=A --name-only HEAD^ HEAD | xargs -I {} git grep -l "$search_string" -- {})
-                errors="$errors\nFiles containing '$search_string':\n$affected_files"
-              fi          
-            done
-              
-            if [ ! -z "$errors" ]; then          
-              echo -e "Errors found in the following files:"      
-              echo -e "$errors"      
-              echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"      
-              exit 1          
-            else          
-              echo "No errors found."          
+            if [ ! -z "$errors" ]; then              
+              echo -e "Errors found in the following lines:"          
+              echo -e "$errors"          
+              echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"          
+              exit 1              
+            else              
+              echo "No errors found."              
             fi
