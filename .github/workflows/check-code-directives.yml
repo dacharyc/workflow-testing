@@ -25,20 +25,20 @@ jobs:
             echo "Checking diff between origin/${{ github.base_ref }} and ${{ github.sha }}"      
 
             new_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} | grep '^+' | grep -v '^\+\+\+')  
-            echo "New lines added in this PR:\n$new_lines"  
+            echo -e "New lines added in this PR:\n$new_lines"  
               
-            for search_string in "${strings_to_search[@]}"; do          
+            for search_string in "${strings_to_search[@]}"; do
+              echo "Searching for '$search_string' in new lines..."      
               if echo "$new_lines" | grep -q "$search_string"; then          
                 affected_files=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} --name-only -G"$search_string")  
                 errors="$errors\n$affected_files"  
               fi          
-            done      
+            done
               
             if [ ! -z "$errors" ]; then          
               echo -e "Errors found in the following files:"      
               echo -e "$errors"      
               echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"      
-              echo "For more information, refer to the wiki: [link here]"      
               exit 1          
             else          
               echo "No errors found."          
