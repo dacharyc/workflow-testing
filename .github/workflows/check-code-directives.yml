@@ -39,7 +39,7 @@ jobs:
                     echo ".. code:: appears $code_counter times in this file"
                   fi
                 fi
-                current_filename=$(echo "$line" | sed "s/^+++ b\//")
+                current_filename=$(echo "$line" | sed "s/^+++ b\///")
                 code_block_counter=0
                 code_counter=0
                 continue
