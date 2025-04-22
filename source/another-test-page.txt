@@ -1,0 +1,18 @@
+=================
+Another Test Page
+=================
+
+.. contents:: On this page
+   :local:
+   :backlinks: none
+   :depth: 1
+   :class: singlecol
+
+This is a another test page. It has some basic text on it.
+
+This is a code directive added after the initial workflow draft. It
+should trigger the workflow run, and fail CI.
+
+.. code:: shell
+
+   Some text on the command line.
