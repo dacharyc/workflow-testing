@@ -36,7 +36,9 @@ jobs:
             done  
       
             if [ ! -z "$errors" ]; then  
-              echo -e "Errors found:\n$errors"  
+              echo -e "Errors found:\n$errors"
+              echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"
+              echo "For more information, refer to the wiki: [link here]"
               exit 1  
             else  
               echo "No errors found."  
