@@ -9,34 +9,64 @@ jobs:
     search_code_directives:
         runs-on: ubuntu-latest
         steps:
-        - name: Check out code
+        - name: Check out content from PR
           uses: actions/checkout@v3
           with:  
-            fetch-depth: 2  # Ensures the previous commit is available to compare
+            fetch-depth: 0
   
         - name: Fetch base branch  
           run: git fetch origin ${{ github.base_ref }} --depth=1 
 
         - name: Search for undesired directives
           run: |
-            strings_to_search=('.. code-block::' '.. code::')
-            errors=""  
+            errors=""
 
-            new_lines=$(git diff HEAD^ HEAD | grep '^+' | grep -v '^\+\+\+')  
-          
-            echo -e "New lines added in this commit:\n$new_lines"  
-      
-            for search_string in "${strings_to_search[@]}"; do    
-              echo "Searching for '$search_string' in new lines..."          
-              if echo "$new_lines" | grep -q "$search_string"; then              
-                affected_files=$(echo "$new_lines" | grep "$search_string")  
-                errors="$errors\nOccurrences of '$search_string':\n$affected_files"  
-              fi              
-            done    
+            plus_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} | grep "^+")
+
+            current_filename=""
+            code_block_counter=0
+            code_counter=0
+            for line in "${plus_lines[@]}"; do
+              echo "$line" | grep "^+++" | /dev/null
+              if [ $? -eq 0 ] ; then
+                if [ $code_block_counter -ne 0 ] || [ $code_counter -ne 0 ] ; then
+                  errors="yes"
+                  echo "$current_filename contains unsupported code block directives"
+                  if [ $code_block_counter -ne 0 ] ; then
+                    echo ".. code-block:: appears $code_block_counter times in this file"
+                  fi
+                  if [ $code_counter -ne 0 ] ; then
+                    echo ".. code:: appears $code_counter times in this file"
+                  fi
+                fi
+                current_filename=$(echo "$line" | sed "s/^+++ b\//")
+                code_block_counter=0
+                code_counter=0
+                continue
+              fi
+              echo "$line" | grep '\.\. code-block::' | /dev/null
+              if [ $? -eq 0 ] ; then
+                code_block_counter=$((code_block_counter + 1))
+                continue
+              fi
+              echo "$line" | grep '\.\. code::' | /dev/null
+              if [ $? -eq 0 ] ; then
+                code_counter=$((code_counter + 1))
+                continue
+              fi
+            done
+            if [ $code_block_counter -ne 0 ] || [ $code_counter -ne 0 ] ; then
+              errors="yes"
+              echo "$current_filename contains unsupported code block directives"
+              if [ $code_block_counter -ne 0 ] ; then
+                echo ".. code-block:: appears $code_block_counter times in this file"
+              fi
+              if [ $code_counter -ne 0 ] ; then
+                echo ".. code:: appears $code_counter times in this file"
+              fi
+            fi
               
-            if [ ! -z "$errors" ]; then              
-              echo -e "Errors found in the following lines:"          
-              echo -e "$errors"          
+            if [ "$errors" == "yes" ]; then
               echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"          
               exit 1              
             else              
