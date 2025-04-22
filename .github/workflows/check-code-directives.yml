@@ -44,12 +44,12 @@ jobs:
                 code_counter=0
                 continue
               fi
-              echo "$line" | grep '\.\. code-block::' | /dev/null
+              echo "$line" | grep '\.\. code-block::'
               if [ $? -eq 0 ] ; then
                 code_block_counter=$((code_block_counter + 1))
                 continue
               fi
-              echo "$line" | grep '\.\. code::' | /dev/null
+              echo "$line" | grep '\.\. code::'
               if [ $? -eq 0 ] ; then
                 code_counter=$((code_counter + 1))
                 continue
