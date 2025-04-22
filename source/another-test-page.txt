@@ -15,3 +15,7 @@ This PR has a new code directive. It should not.
 .. code:: shell
 
    Some text on the command line.
+
+.. code:: shell
+
+   Some text on the command line.
