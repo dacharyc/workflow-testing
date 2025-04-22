@@ -22,28 +22,24 @@ jobs:
             strings_to_search=('.. code-block::' '.. code::')
             errors=""  
             
-            echo "Checking diff between origin/${{ github.base_ref }} and ${{ github.sha }}"  
-               
-            changed_files=$(git diff --name-only origin/${{ github.base_ref }}...${{ github.sha }})  
-            echo "Changed files: $changed_files"  
+            echo "Checking diff between origin/${{ github.base_ref }} and ${{ github.sha }}"      
+
+            new_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} | grep '^+' | grep -v '^\+\+\+')  
+            echo "New lines added in this PR:\n$new_lines"  
               
-            for file in $changed_files; do      
-              echo "Checking file: $file"   
-              new_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} -- "$file" | grep '^+' | grep -v '^\+\+\+')  
-              echo "New lines in $file: $new_lines"  
-            
-              for search_string in "${strings_to_search[@]}"; do      
-                if echo "$new_lines" | grep -q "$search_string"; then      
-                  errors="$errors\nFile '$file' contains '$search_string'"      
-                fi      
-              done      
-            done  
-          
-            if [ ! -z "$errors" ]; then      
-              echo -e "Errors found:\n$errors"  
-              echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"  
-              echo "For more information, refer to the wiki: [link here]"  
-              exit 1      
-            else      
-              echo "No errors found."      
+            for search_string in "${strings_to_search[@]}"; do          
+              if echo "$new_lines" | grep -q "$search_string"; then          
+                affected_files=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} --name-only -G"$search_string")  
+                errors="$errors\n$affected_files"  
+              fi          
+            done      
+              
+            if [ ! -z "$errors" ]; then          
+              echo -e "Errors found in the following files:"      
+              echo -e "$errors"      
+              echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"      
+              echo "For more information, refer to the wiki: [link here]"      
+              exit 1          
+            else          
+              echo "No errors found."          
             fi
