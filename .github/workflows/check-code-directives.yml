@@ -21,54 +21,69 @@ jobs:
           run: |
             errors=""
 
-            plus_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }} | grep "^+")
+            diff_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }})
 
             current_filename=""
             code_block_counter=0
             code_counter=0
-            for line in "${plus_lines[@]}"; do
-              echo "$line" | grep "^+++"
-              if [ $? -eq 0 ] ; then
-                if [ $code_block_counter -ne 0 ] || [ $code_counter -ne 0 ] ; then
-                  errors="yes"
-                  echo "$current_filename contains unsupported code block directives"
-                  if [ $code_block_counter -ne 0 ] ; then
-                    echo ".. code-block:: appears $code_block_counter times in this file"
-                  fi
-                  if [ $code_counter -ne 0 ] ; then
-                    echo ".. code:: appears $code_counter times in this file"
-                  fi
-                fi
+
+            # Process the captured diffs line by line
+            while IFS= read -r line; do
+
+              # Detect filename lines, which start with '+++ b/'
+              if [[ "$line" =~ ^\+\+\+ ]]; then
+                # Extract the current filename
                 current_filename=$(echo "$line" | sed "s/^+++ b\///")
-                code_block_counter=0
-                code_counter=0
-                continue
+
+                # Check if the filename starts with 'source/' and reset counters if true
+                if [[ "$current_filename" == source/* ]]; then
+                  # If the current file has counts from previous file, print the errors before resetting
+                  if [ "$current_filename" != "" ] && ([ $code_block_counter -gt 0 ] || [ $code_counter -gt 0 ]); then
+                    errors="yes"
+                    echo "'$current_filename' contains deprecated code block directives"
+                    if [ $code_block_counter -gt 0 ]; then
+                      echo "- the deprecated '.. code-block::' directive appears $code_block_counter times in this file"
+                    fi
+                    if [ $code_counter -gt 0 ]; then
+                      echo "- the deprecated '.. code::' directive appears $code_counter times in this file"
+                    fi
+                  fi
+                  # Reset counters
+                  code_block_counter=0
+                  code_counter=0
+                else
+                  # Set filename empty to skip processing unrelated directories
+                  current_filename=""
+                fi
               fi
-              echo "$line" | grep '\.\. code-block::'
-              if [ $? -eq 0 ] ; then
-                code_block_counter=$((code_block_counter + 1))
-                continue
+
+              # When filename is valid and starts with 'source/', check the diff changes
+              if [[ "$current_filename" == source/* ]] && [[ "$line" =~ ^\+ && ! "$line" =~ ^\+\+\+ ]]; then
+                if echo "$line" | grep -q '.. code-block::'; then
+                  ((code_block_counter++))
+                fi
+                if echo "$line" | grep -q '.. code::'; then
+                  ((code_counter++))
+                fi
               fi
-              echo "$line" | grep '\.\. code::'
-              if [ $? -eq 0 ] ; then
-                code_counter=$((code_counter + 1))
-                continue
-              fi
-            done
-            if [ $code_block_counter -ne 0 ] || [ $code_counter -ne 0 ] ; then
+            done <<< "$diff_lines"
+
+            # After processing all lines, check and print the final file's error if necessary
+            if [[ "$current_filename" == source/* ]] && ([ $code_block_counter -gt 0 ] || [ $code_counter -gt 0 ]); then
               errors="yes"
               echo "$current_filename contains unsupported code block directives"
-              if [ $code_block_counter -ne 0 ] ; then
-                echo ".. code-block:: appears $code_block_counter times in this file"
+              if [ $code_block_counter -gt 0 ]; then
+                echo "- the deprecated '.. code-block::' directive appears $code_block_counter times in this file"
               fi
-              if [ $code_counter -ne 0 ] ; then
-                echo ".. code:: appears $code_counter times in this file"
+              if [ $code_counter -gt 0 ]; then
+                echo "- the deprecated '.. code::' directive appears $code_counter times in this file"
               fi
             fi
-              
+
+            # Provide a summary based on errors found
             if [ "$errors" == "yes" ]; then
-              echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"          
-              exit 1              
-            else              
-              echo "No errors found."              
+              echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"
+              exit 1
+            else
+              echo "No errors found."
             fi
