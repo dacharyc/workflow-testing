@@ -23,7 +23,9 @@ jobs:
           changed_files=$(git diff --name-only origin/${{ github.base_ref }}...${{ github.sha }})
   
           # Export the list to an environment variable for use in later steps  
-          echo "CHANGED_FILES=$changed_files" >> $GITHUB_ENV
+          echo "$changed_files" | while read file; do  
+            echo "CHANGED_FILE_$GITHUB_RUN_ID=$file" >> $GITHUB_ENV  
+          done
 
       - name: Check for direct edits to generated code example files
         shell: bash {0}  
@@ -31,10 +33,11 @@ jobs:
 
           changed_files_include_tests="no"
 
-          for file in $CHANGED_FILES; do  
-            if [[ "$file" == code-example-tests/* ]]; then  
-              changed_files_include_tests="yes"
-            fi
+          for file in $(env | grep CHANGED_FILE_); do  
+            extracted_file="${file#*=}"  
+            if [[ "$extracted_file" == code-example-tests/* ]]; then  
+              changed_files_include_tests="yes"  
+            fi  
           done
 
           if [ "$changed_files_include_tests" == "no" ]; then
