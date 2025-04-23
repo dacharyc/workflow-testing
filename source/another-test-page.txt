@@ -16,6 +16,6 @@ This PR has a new code directive. It should not.
 
    Some text on the command line.
 
-.. code:: shell
+.. code-block:: shell
 
    Some text on the command line.
