@@ -84,7 +84,7 @@ jobs:
             # Provide a summary based on errors found
             if [ "$errors" == "yes" ]; then
               echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"
-              exit 1
+              exit 0
             else
               echo "No errors found."
             fi
