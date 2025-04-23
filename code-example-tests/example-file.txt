@@ -1,1 +1,4 @@
 This is a totally random file to test a GitHub workflow.
+
+Making literally any change in the 'code-example-tests' directory should fix the
+simple CI logic we're using here.
