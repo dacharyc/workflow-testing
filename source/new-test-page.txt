@@ -10,7 +10,7 @@ New Test Page
 
 This is a new test page. It has some basic text on it.
 
-This is a code block directive added after the initial workflow draft. It
+This is a code block directive added after the initial workflow. It
 should trigger the workflow run, and fail CI.
 
 .. code-block:: shell
