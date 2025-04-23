@@ -1,0 +1,47 @@
+name: Check Direct Edits to Generated Examples
+
+on:
+  pull_request:
+    paths:
+      - "tested-examples/**"
+
+jobs:
+  check_generated_files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out content from PR
+        uses: actions/checkout@v3
+        with:  
+          fetch-depth: 0
+
+      - name: Fetch base branch  
+        run: git fetch origin ${{ github.base_ref }} --depth=1 
+
+      - name: List Changed Files  
+        run: |  
+          # Get a list of filenames from changes in PR  
+          changed_files=$(git diff --name-only origin/${{ github.base_ref }}...${{ github.sha }})
+  
+          # Export the list to an environment variable for use in later steps  
+          echo "CHANGED_FILES=$changed_files" >> $GITHUB_ENV
+
+      - name: Check for direct edits to generated code example files
+        shell: bash {0}  
+        run: |
+
+          changed_files_include_tests="no"
+
+          for file in $CHANGED_FILES; do  
+            if [[ "$file" == code-example-tests/* ]]; then  
+              changed_files_include_tests="yes"
+            fi
+          done
+
+          if [ "$changed_files_include_tests" == "no" ]; then
+            echo "This PR contains edits to a 'tested-examples' file without edits to the test used to generate this file."
+            echo "The contents of the 'tested-examples' directory are generated automatically - if you change them manually, they will be overwritten."
+            echo "Please make the changes to the file in the 'code-example-tests' directory and use the provided tooling to re-generate the file in 'tested-examples'."
+            exit 1
+          else
+            echo "No issues found."
+          fi
