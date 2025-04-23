@@ -5,6 +5,9 @@ on:
     paths:
       - "tested-examples/**"
 
+env:
+  CHANGED_FILE_LIST: ""
+
 jobs:
   check_generated_files:
     runs-on: ubuntu-latest
@@ -23,9 +26,7 @@ jobs:
           changed_files=$(git diff --name-only origin/${{ github.base_ref }}...${{ github.sha }})
   
           # Export the list to an environment variable for use in later steps  
-          echo "$changed_files" | while read file; do  
-            echo "CHANGED_FILE_$GITHUB_RUN_ID=$file" >> $GITHUB_ENV  
-          done
+          echo "CHANGED_FILE_LIST=$(echo "$changed_files" | tr '\n' ' ')" >> $GITHUB_ENV
 
       - name: Check for direct edits to generated code example files
         shell: bash {0}  
@@ -33,11 +34,11 @@ jobs:
 
           changed_files_include_tests="no"
 
-          for file in $(env | grep CHANGED_FILE_); do  
-            extracted_file="${file#*=}"  
-            if [[ "$extracted_file" == code-example-tests/* ]]; then  
-              changed_files_include_tests="yes"  
-            fi  
+          for file in ${{ env.CHANGED_FILE_LIST }}; do  
+            if [[ "$file" == "code-example-tests/**" ]]; then  
+              changed_files_include_tests="yes"
+              break
+            fi
           done
 
           if [ "$changed_files_include_tests" == "no" ]; then
