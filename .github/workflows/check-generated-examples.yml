@@ -35,7 +35,7 @@ jobs:
           changed_files_include_tests="no"
 
           for file in ${{ env.CHANGED_FILE_LIST }}; do  
-            if [[ "$file" == "code-example-tests/**" ]]; then  
+            if [[ "$file" == code-example-tests/* ]]; then  
               changed_files_include_tests="yes"
               break
             fi
