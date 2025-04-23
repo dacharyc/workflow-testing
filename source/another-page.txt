@@ -1,0 +1,2 @@
+Adding something to the source directory should not trigger the check
+generated files workflow.

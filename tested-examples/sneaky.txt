@@ -1,2 +1,0 @@
-Manually adding something to the 'tested-examples' directory directly should
-cause the CI to fail. Re-run CI.
