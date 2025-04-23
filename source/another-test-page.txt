@@ -16,6 +16,8 @@ This PR has a new code directive.
 
    Some text on the command line.
 
+Both of these directives are deprecated.
+
 .. code-block:: shell
 
    Some text on the command line.
