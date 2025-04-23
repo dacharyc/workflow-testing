@@ -10,7 +10,7 @@ Another Test Page
 
 This is a another test page. It has some basic text on it.
 
-This PR has a new code directive. It should not. This directive is deprecated.
+This PR has a new code directive.
 
 .. code:: shell
 
