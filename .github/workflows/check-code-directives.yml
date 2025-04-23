@@ -20,6 +20,7 @@ jobs:
         - name: Search for deprecated directives
           shell: bash {0}  
           run: |
+
             errors=""
 
             diff_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }})
@@ -84,7 +85,7 @@ jobs:
             # Provide a summary based on errors found
             if [ "$errors" == "yes" ]; then
               echo "Please replace these directives with '.. literalinclude::' or '.. io-code-block::'"
-              exit 0
+              exit 1
             else
               echo "No errors found."
             fi
