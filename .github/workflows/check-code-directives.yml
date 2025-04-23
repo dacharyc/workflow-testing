@@ -15,7 +15,7 @@ jobs:
             fetch-depth: 0
   
         - name: Fetch base branch  
-          run: git fetch origin ${{ github.base_ref }} --depth=1 
+          run: git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
 
         - name: Search for deprecated directives
           shell: bash {0}  
@@ -23,7 +23,7 @@ jobs:
 
             errors=""
 
-            diff_lines=$(git diff origin/${{ github.base_ref }}...${{ github.sha }})
+            diff_lines=$(git diff origin/${{ github.event.pull_request.base.ref }}...${{ github.sha }})
 
             current_filename=""
             code_block_counter=0

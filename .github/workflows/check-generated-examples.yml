@@ -18,12 +18,12 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch base branch  
-        run: git fetch origin ${{ github.base_ref }} --depth=1 
+        run: git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1 
 
       - name: List Changed Files  
         run: |  
           # Get a list of filenames from changes in PR  
-          changed_files=$(git diff --name-only origin/${{ github.base_ref }}...${{ github.sha }})
+          changed_files=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...${{ github.sha }})
   
           # Export the list to an environment variable for use in later steps  
           echo "CHANGED_FILE_LIST=$(echo "$changed_files" | tr '\n' ' ')" >> $GITHUB_ENV
