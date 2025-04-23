@@ -1,0 +1,23 @@
+=================
+Another Test Page
+=================
+
+.. contents:: On this page
+   :local:
+   :backlinks: none
+   :depth: 1
+   :class: singlecol
+
+This is a another test page. It has some basic text on it.
+
+This PR has a new code directive.
+
+.. code:: shell
+
+   Some text on the command line.
+
+Both of these directives are deprecated.
+
+.. code-block:: shell
+
+   Some text on the command line.
