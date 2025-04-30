@@ -1,6 +1,6 @@
-    [
-      {
-          "resource": { "cluster": true },
-          "actions": [ "bypassWriteBlockingMode", "setUserWriteBlockMode" ]
-      }
-    ]
+[
+  {
+    "resource": { "cluster": true },
+    "actions": [ "bypassWriteBlockingMode", "setUserWriteBlockMode" ]
+  }
+]

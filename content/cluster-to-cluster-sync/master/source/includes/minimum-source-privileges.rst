@@ -7,7 +7,7 @@
      - Minimum Source Privileges
 
    * - Default
-     - .. cod.. literalinclude:: /untested-examples/includes/minimum-source-privileges/1.js
+     - .. literalinclude:: /untested-examples/includes/minimum-source-privileges/1.js
           :language: javascript
 
    * - Write-blocking
@@ -28,6 +28,6 @@
           :language: javascript
 
    * - V4.4 Migration
-     - .. cod.. literalinclude:: /untested-examples/includes/minimum-source-privileges/4.js
+     - .. literalinclude:: /untested-examples/includes/minimum-source-privileges/4.js
           :language: javascript
 

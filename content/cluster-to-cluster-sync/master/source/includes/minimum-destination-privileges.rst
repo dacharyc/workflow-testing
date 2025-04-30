@@ -7,7 +7,7 @@
      - Minimum Destination Privileges
 
    * - Default
-     - .. cod.. literalinclude:: /untested-examples/includes/minimum-destination-privileges/1.js
+     - .. literalinclude:: /untested-examples/includes/minimum-destination-privileges/1.js
           :language: javascript
 
    * - Write Blocking

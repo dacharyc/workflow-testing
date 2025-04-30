@@ -1,3 +1,3 @@
-    [
-        { "resource": { "db": "", "collection": "" }, "actions": [ "dropDatabase" ] }
-    ]
+[
+  { "resource": { "db": "", "collection": "" }, "actions": [ "dropDatabase" ] }
+]
