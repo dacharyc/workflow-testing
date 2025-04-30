@@ -36,9 +36,8 @@ destination cluster, see :ref:`c2c-quickstart-synchronize`.
 When beginning your sync operation for a many-to-one migration, add
 the following parameter to the :ref:`/start <c2c-api-start>` requests: 
 
-.. code:: 
-
-   "destinationDataHandling": "ignorePreExistingNamespaces"
+.. literalinclude:: /untested-examples/reference/beta-program-private/many-to-one/2.txt
+   :language: text
 
 Setting ``"destinationDataHandling"`` to ``"ignorePreExistingNamespaces"`` 
 allows each migration to write to the destination cluster that may have 
@@ -94,7 +93,7 @@ and ``27001`` with a destination cluster running on port ``35000``. The command
 also sets the ``--migrationName`` option to describe the operations and store 
 migration metadata for each sync.
 
-.. literalinclude:: /untested-examples/reference/beta-program-private/many-to-one/2.sh
+.. literalinclude:: /untested-examples/reference/beta-program-private/many-to-one/3.sh
    :language: shell
 
 Learn More 
