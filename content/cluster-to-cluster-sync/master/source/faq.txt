@@ -149,6 +149,9 @@ If I check the checkbox after making the PR with the unchecked checkbox, will
 a subsequent run of the CI pass? This should test a writer forgetting to check
 the checkbox, but then correcting it after making the PR.
 
+Subsequent run does not pass on changing checkbox state. What if I add a
+new commit to trigger a new workflow run?
+
 .. code-block:: text
 
    This is a random new code block showing some text.
