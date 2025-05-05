@@ -7,6 +7,9 @@ on:
     branches:  
       - main
 
+env:
+  CONTAINS_AUTOMATED_CONTENT: ""
+
 jobs:
   search_code_directives:
     runs-on: ubuntu-latest
@@ -31,13 +34,15 @@ jobs:
           # Check if the checkbox is present and is unchecked (i.e., it should be listed as '- [ ]' not '- [x]')  
           if echo "$pr_body" | grep -q "\- \[ \] $checkbox_text"; then
             echo "PR does not contain automatically generated content. Searching for deprecated code block directives."
+            echo "CONTAINS_AUTOMATED_CONTENT='false'" >> $GITHUB_ENV
           else
             echo "PR contains automated content. Skipping check for code-block and code directives."  
-            exit 0
+            echo "CONTAINS_AUTOMATED_CONTENT='true'" >> $GITHUB_ENV
           fi
 
       - name: Search for deprecated directives
-        shell: bash {0}  
+        shell: bash {0}
+        if: ${{ env.CONTAINS_AUTOMATED_CONTENT == 'false' }}
         run: |
 
           errors=""
