@@ -3,7 +3,7 @@ name: Check Code Example Directives
 on:
   pull_request:
     paths:
-      - "source/**"
+      - "**/source/**"
 
 jobs:
   search_code_directives:
