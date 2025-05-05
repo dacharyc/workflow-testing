@@ -141,6 +141,18 @@ error:
 
    Invalid URI option, write concern must be majority
 
+Add a new code block directive. This PR will have the automated content checkbox
+UNCHECKED initially, so it should trigger the code-block check and should fail
+in CI.
+
+If I check the checkbox after making the PR with the unchecked checkbox, will
+a subsequent run of the CI pass? This should test a writer forgetting to check
+the checkbox, but then correcting it after making the PR.
+
+.. code-block:: text
+
+   This is a random new code block showing some text.
+
 ``mongosync`` accepts all other :ref:`connection string options
 <mongodb-uri>`.
 
