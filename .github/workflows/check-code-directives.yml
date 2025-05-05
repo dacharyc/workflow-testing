@@ -13,9 +13,13 @@ jobs:
           uses: actions/checkout@v3
           with:  
             fetch-depth: 0
-  
+        
+        - name: Fetch base branch  
+          run: git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
+
         - name: Check PR body for automated content checkbox  
           id: check_is_automated_content
+          shell: bash {0}
           run: |
             # Get the PR body
             pr_body="${{ github.event.pull_request.body }}"
@@ -30,9 +34,6 @@ jobs:
               echo "PR contains automated content. Skipping check for code-block and code directives."  
               exit 0
             fi
-        
-        - name: Fetch base branch  
-          run: git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
 
         - name: Search for deprecated directives
           shell: bash {0}  
