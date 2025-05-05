@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - "**/source/**"
+    branches:  
+      - main
 
 jobs:
   search_code_directives:
