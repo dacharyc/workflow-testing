@@ -141,6 +141,14 @@ error:
 
    Invalid URI option, write concern must be majority
 
+Add a new code block directive. This PR will have the automated content checkbox
+checked, so it should not trigger the code-block check and should not fail in
+CI.
+
+.. code-block:: text
+
+   This is a random new code block showing some text.
+
 ``mongosync`` accepts all other :ref:`connection string options
 <mongodb-uri>`.
 
