@@ -141,6 +141,12 @@ error:
 
    Invalid URI option, write concern must be majority
 
+Adding a new random code block directive to test code-block workflow.
+
+.. code-block:: shell
+
+   Invalid URI option, write concern must be majority
+
 ``mongosync`` accepts all other :ref:`connection string options
 <mongodb-uri>`.
 
